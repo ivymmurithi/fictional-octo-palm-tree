@@ -1,9 +1,11 @@
+from rest_framework import viewsets
 from rest_framework.response import Response
 from .models import Account, Transaction
 from django.shortcuts import get_object_or_404
 from .serializers import AccountSerializer, TransactionSerializer
 from rest_framework.decorators import api_view
 from django.db import transaction
+from rest_framework.exceptions import ValidationError
 
 
 @api_view(['POST'])
@@ -14,7 +16,7 @@ def deposit(request):
         transaction = serializer.save()
 
         transaction.source.balance += transaction.amount
-        transaction.source.save() 
+        transaction.source.save()
 
         return Response(TransactionSerializer(transaction).data)
 
@@ -47,4 +49,9 @@ def send(request):
             send_transaction.target.save()
 
         return Response(TransactionSerializer(send_transaction).data)
+    
+
+class AccountViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Account.objects.all()
+    serializer_class = AccountSerializer
 

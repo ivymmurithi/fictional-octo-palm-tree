@@ -9,6 +9,7 @@ psycopg2-binary = "*"
 python-decouple = "*"
 django-extensions = "*"
 djangorestframework = "*"
+factory-boy = "*"
 
 [dev-packages]
 

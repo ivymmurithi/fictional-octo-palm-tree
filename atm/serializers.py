@@ -14,6 +14,12 @@ class TransactionSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def validate(self, data):
-        if data["transaction_type"] == "withdraw" or "send" and data["amount"] >= data["source"].balance:
-            raise serializers.ValidationError("You have insufficient balance")
+        transaction_type = data.get("transaction_type")
+        amount = data.get("amount")
+        source_account = Account.objects.get(id=data.get("source").id)
+
+        if transaction_type in ["withdraw", "send"]:
+            if amount > source_account.balance:
+                raise serializers.ValidationError("You have insufficient balance")
+
         return data
